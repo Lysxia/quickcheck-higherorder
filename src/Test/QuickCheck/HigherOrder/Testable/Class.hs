@@ -30,7 +30,7 @@ forAll_ f =
 
 -- | A 'Property' is the canonical type of testable properties.
 --
--- > @property' \@Property = property \@Property = id@
+-- > property' @Property = property @Property = id
 instance Testable' Property where
   property' = id
 
