@@ -51,10 +51,13 @@ instance TestEq a => TestEq [a] where
   a : as =? b : bs = a =? b .&&. as =? bs
   _ =? _ = property False
 
-instance TestEq Int where
-  (=?) = decEq
-
-instance TestEq () where
-  (=?) = decEq
+instance TestEq Integer where (=?) = decEq
+instance TestEq Int where (=?) = decEq
+instance TestEq Word where (=?) = decEq
+instance TestEq Double where (=?) = decEq
+instance TestEq Char where (=?) = decEq
+instance TestEq () where (=?) = decEq
+instance TestEq Bool where (=?) = decEq
+instance TestEq Ordering where (=?) = decEq
 
 deriving instance TestEq a => TestEq (Monoid.Sum a)
