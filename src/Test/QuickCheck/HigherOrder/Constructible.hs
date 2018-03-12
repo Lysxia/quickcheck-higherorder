@@ -30,9 +30,9 @@ import Test.QuickCheck
 class (Arbitrary (Repr a), Show (Repr a)) => Constructible a where
   -- | The observable representation of a value.
   type Repr a
+  type instance Repr a = a
   -- | Interpret a representation as a value.
   fromRepr :: Repr a -> a
-
 
 -- * The 'Constructed' modifier
 
@@ -94,14 +94,15 @@ instance Constructible a => Constructible [a] where
   type Repr [a] = [Repr a]
   fromRepr = fmap fromRepr
 
-instance Constructible Int where
-  type Repr Int = Int
-  fromRepr = id
-
-instance Constructible () where
-  type Repr () = ()
-  fromRepr = id
+instance Constructible Integer where fromRepr = id
+instance Constructible Int where fromRepr = id
+instance Constructible Word where fromRepr = id
+instance Constructible Double where fromRepr = id
+instance Constructible Char where fromRepr = id
+instance Constructible () where fromRepr = id
+instance Constructible Bool where fromRepr = id
+instance Constructible Ordering where fromRepr = id
 
 instance Constructible a => Constructible (Monoid.Sum a) where
-  type Repr (Monoid.Sum a) = Repr a
-  fromRepr = Monoid.Sum . fromRepr
+  type Repr (Monoid.Sum a) = Monoid.Sum (Repr a)
+  fromRepr = Monoid.Sum . fromRepr . Monoid.getSum
