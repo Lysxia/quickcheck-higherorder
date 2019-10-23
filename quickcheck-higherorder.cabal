@@ -19,6 +19,7 @@ library
   exposed-modules:
     Test.QuickCheck.HigherOrder
     Test.QuickCheck.HigherOrder.Constructible
+    Test.QuickCheck.HigherOrder.Function
     Test.QuickCheck.HigherOrder.Testable
     Test.QuickCheck.HigherOrder.Testable.Class
     Test.QuickCheck.HigherOrder.TestEq
