@@ -39,6 +39,24 @@ data Branches x r where
   Alt :: Branches x r -> Branches y r -> Branches (Either x y) r
   Pat :: ConName -> Fields x r -> Branches x r
 
+-- Smart constructors to enforce some invariants
+
+coapply :: Constructible a => Repr_ a -> (b :-> (a -> b) :-> r) -> (a -> b) :-> r
+coapply _ (Const h) = h
+coapply a h = CoApply a h
+
+apply :: FunName -> (a -> b) -> (b :-> r) -> (a :-> r)
+apply _ _ (Const r) = Const r
+apply fn f h = Apply fn f h
+
+case_ :: TypeName -> (a -> x) -> Branches x r -> r -> (a :-> r)
+case_ _ _ Fail r = Const r
+case_ tn f b r = Case tn f b r
+
+caseInteger :: TypeName -> (a -> Integer) -> Bin r -> r -> (a :-> r)
+caseInteger _ _ BinEmpty r = Const r
+caseInteger tn f b r = CaseInteger tn f b r
+
 alt :: Branches x r -> Branches y r -> Branches (Either x y) r
 alt Fail Fail = Fail
 alt b1 b2 = Alt b1 b2
@@ -56,10 +74,12 @@ shrinkFun shrinkR = go where
   go :: forall b. (b :-> r) -> [b :-> r]
   go Absurd = []
   go (Const r) = fmap Const (shrinkR r)
-  go (CoApply a h) = fmap (CoApply a) (shrinkFun go h) ++ fmap (\a' -> CoApply a' h) (shrink a)
-  go (Apply fn f h) = Apply fn f <$> go h
-  go (Case tn f b r) = Const r : fmap (\b' -> Case tn f b' r) (shrinkBranches shrinkR b)
-  go (CaseInteger tn f b r) = Const r : fmap (\b' -> CaseInteger tn f b' r) (shrinkBin shrinkR b)
+  go (CoApply a h) = fmap (coapply a) (shrinkFun go h) ++ fmap (\a' -> CoApply a' h) (shrink a)
+  go (Apply fn f h) = apply fn f <$> go h
+  go (Case tn f b r) = Const r : fmap (\b' -> case_ tn f b' r) (shrinkBranches shrinkR b)
+  go (CaseInteger tn f b r) = root b : fmap (\b' -> caseInteger tn f b' r) (shrinkBin shrinkR b) where
+    root BinEmpty = Const r
+    root (BinAlt r' _ _) = Const r'
 
 shrinkBranches :: forall x r. (r -> [r]) -> Branches x r -> [Branches x r]
 shrinkBranches shrinkR = go where
