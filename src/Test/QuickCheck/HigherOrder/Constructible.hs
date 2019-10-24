@@ -65,10 +65,6 @@ instance Constructible a => Show (Constructed a) where
 
 -- 'Constructible' instances
 
-instance (CoArbitrary a, Function a, Show a, Constructible b) => Constructible (a -> b) where
-  type Repr (a -> b) = Fun a (Repr b)
-  fromRepr f = fromRepr . applyFun f
-
 instance (CoArbitrary a, Function a, Show a, Constructible b) => Constructible (Fun a b) where
   type Repr (Fun a b) = Fun a (Repr b)
   fromRepr = fmap fromRepr

@@ -6,6 +6,7 @@ import Test.Tasty
 import Test.Tasty.HUnit
 
 import Test.QuickCheck.HigherOrder.Function
+import Test.QuickCheck.HigherOrder.Function.Types
 
 main :: IO ()
 main = defaultMain tests
@@ -21,7 +22,7 @@ testFunction = testGroup "Function"
   ]
 
 prettyFun_ :: (a :-> String) -> String
-prettyFun_ = prettyFun eConst
+prettyFun_ = prettyFun tConst
 
 testFunctionPretty :: TestTree
 testFunctionPretty = testGroup "pretty"
@@ -34,7 +35,7 @@ testFunctionPretty = testGroup "pretty"
             (Pat "Right" (Field (NoField (Absurd id))))))
   , testCase "coapply"
       $ "case a0 0 of {}"
-      @=? prettyFun_ (CoApply (Repr_ 0 :: Repr_ Int) (Absurd id))
+      @=? prettyFun_ (CoApply (0 :: Int) id (Absurd id))
   , testCase "apply"
       $ "case f a0 of {}"
       @=? prettyFun_ (Apply "f" id (Absurd id))

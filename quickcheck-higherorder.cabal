@@ -20,6 +20,10 @@ library
     Test.QuickCheck.HigherOrder
     Test.QuickCheck.HigherOrder.Constructible
     Test.QuickCheck.HigherOrder.Function
+    Test.QuickCheck.HigherOrder.Function.CoArbitrary
+    Test.QuickCheck.HigherOrder.Function.Pretty
+    Test.QuickCheck.HigherOrder.Function.Shrink
+    Test.QuickCheck.HigherOrder.Function.Types
     Test.QuickCheck.HigherOrder.Testable
     Test.QuickCheck.HigherOrder.Testable.Class
     Test.QuickCheck.HigherOrder.TestEq
