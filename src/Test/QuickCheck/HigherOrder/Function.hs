@@ -14,7 +14,7 @@ import Data.Ord (comparing)
 import Data.Semigroup (Semigroup(..))
 import Data.Void
 
-import Test.QuickCheck (Arbitrary(..))
+import Test.QuickCheck (Arbitrary(..), Gen)
 
 import Test.QuickCheck.HigherOrder.Constructible
 
@@ -33,6 +33,7 @@ instance Arbitrary (Repr a) => Arbitrary (Repr_ a) where
   arbitrary = Repr_ <$> arbitrary
   shrink (Repr_ r) = Repr_ <$> shrink r
 
+-- Representation of functions @(a -> r)@.
 data a :-> r where
   Const :: r -> a :-> r
   CoApply :: Constructible a => Repr_ a -> (b :-> (a -> b) :-> r) -> (a -> b) :-> r
@@ -76,7 +77,36 @@ data Bin r
   = BinEmpty
   | BinAlt r (Bin r) (Bin r)
 
----
+-- * Random generation
+
+instance (CoArbitrary a, Arbitrary r) => Arbitrary (a :-> r) where
+  arbitrary = coarbitrary arbitrary
+
+-- A reimplementation of @CoArbitrary@ from QuickCheck,
+-- but instead of functions we generate representations of functions.
+class CoArbitrary a where
+  coarbitrary :: Gen r -> Gen (a :-> r)
+
+instance CoArbitrary () where
+  coarbitrary g = Const <$> g
+
+instance CoArbitrary Void where
+  coarbitrary _ = pure (Absurd id)
+
+instance CoArbitrary Integer where
+  coarbitrary = genIntegral "Integer" id
+
+instance CoArbitrary Int where
+  coarbitrary = genIntegral "Int" fromIntegral
+
+genIntegral :: TypeName -> (a -> Integer) -> Gen r -> Gen (a :-> r)
+genIntegral tn f g = CaseInteger tn f <$> g <*> genBin g
+
+genBin :: Gen r -> Gen (Bin r)
+genBin g = self where
+  self = BinAlt <$> g <*> self <*> self
+
+-- * Pretty printing
 
 data Var = Var String !Int
 
