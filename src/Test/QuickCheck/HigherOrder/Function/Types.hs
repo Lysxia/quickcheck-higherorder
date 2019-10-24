@@ -16,6 +16,7 @@
 
 module Test.QuickCheck.HigherOrder.Function.Types where
 
+import Data.Maybe (fromMaybe)
 import Data.Void (Void)
 
 import Test.QuickCheck (Arbitrary(..))
@@ -52,7 +53,7 @@ data Fields x r where
 -- | Representation of branches of a @case@ on an @Integer@.
 data Bin r
   = BinEmpty
-  | BinAlt r (Bin r) (Bin r)
+  | BinAlt (Maybe r) (Bin r) (Bin r)
   deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
 
 -- Smart constructors to enforce some invariants
@@ -77,6 +78,9 @@ alt :: Branches x r -> Branches y r -> Branches (Either x y) r
 alt Fail Fail = Fail
 alt b1 b2 = Alt b1 b2
 
+binAlt :: r -> Bin r -> Bin r -> Bin r
+binAlt = BinAlt . Just
+
 --
 
 applyFun :: (a :-> r) -> a -> r
@@ -100,14 +104,14 @@ applyFields (Field h) (x, y) = applyFun (applyFields h x) y
 applyBin :: r -> Bin r -> Integer -> r
 applyBin r BinEmpty _ = r
 applyBin r (BinAlt r0 b0 b1) x = case compare x 0 of
-  EQ -> r0
+  EQ -> fromMaybe r r0
   GT -> applyBin' r b0 (x - 1)
   LT -> applyBin' r b1 (- x - 1)
 
 applyBin' :: r -> Bin r -> Integer -> r
 applyBin' r BinEmpty _ = r
 applyBin' r (BinAlt r0 b0 b1) x
-  | x == 0 = r0
+  | x == 0 = fromMaybe r r0
   | x `div` 2 == 0 = applyBin' r b0 (x `div` 2)
   | otherwise      = applyBin' r b1 (x `div` 2)
 
@@ -167,5 +171,5 @@ truncateBin :: Int -> (r -> s) -> Bin r -> Bin s
 truncateBin 0 _ _ = BinEmpty
 truncateBin n truncateR d = case d of
   BinEmpty -> BinEmpty
-  BinAlt r d0 d1 -> BinAlt (truncateR r) (go d0) (go d1)
+  BinAlt r d0 d1 -> BinAlt (fmap truncateR r) (go d0) (go d1)
     where go = truncateBin (n-1) truncateR

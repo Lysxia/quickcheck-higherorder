@@ -40,7 +40,7 @@ coarbitraryIntegral tn f g = liftA2 (CaseInteger tn f) g (genBin g)
 
 genBin :: Gen r -> Gen (Bin r)
 genBin g = self where
-  self = liftA3 BinAlt g self self
+  self = liftA3 BinAlt (Just <$> g) self self
 
 -- * Generic implementation
 

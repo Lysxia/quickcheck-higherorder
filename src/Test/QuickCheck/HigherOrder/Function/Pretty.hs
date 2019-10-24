@@ -186,11 +186,17 @@ tBin prettyR b _ vs =
 tBin' :: (r -> C Expr) -> Bin r -> C [(Integer, Expr)]
 tBin' prettyR b vs = go_ b where
   go_ BinEmpty = []
-  go_ (BinAlt r b0 b1) =
-    (0, prettyR r vs) : (go 1 1 b0 . go (-1) (-1) b1) []
+  go_ (BinAlt r_ b0 b1) = tr ++ tb01 where
+    tr = case r_ of
+      Nothing -> []
+      Just r -> [(0, prettyR r vs)]
+    tb01 = (go 1 1 b0 . go (-1) (-1) b1) []
   go _ _ BinEmpty k = k
-  go i n (BinAlt r b0 b1) k =
-    (n, prettyR r vs) : (go i (2 * n) b0 . go i (2 * n + i) b1) k
+  go i n (BinAlt r_ b0 b1) k = tr ++ tb01 where
+    tr = case r_ of
+      Nothing -> []
+      Just r -> [(n, prettyR r vs)]
+    tb01 = (go i (2 * n) b0 . go i (2 * n + i) b1) k
 
 render :: String -> String
 render = go 0 where

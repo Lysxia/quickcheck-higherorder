@@ -17,7 +17,8 @@ shrinkFun shrinkR = go where
   go (Case tn f r b) = Const r : fmap (\b' -> case_ tn f r b') (shrinkBranches shrinkR b)
   go (CaseInteger tn f r b) = root b : fmap (\b' -> caseInteger tn f r b') (shrinkBin shrinkR b) where
     root BinEmpty = Const r
-    root (BinAlt r' _ _) = Const r'
+    root (BinAlt Nothing _ _) = Const r
+    root (BinAlt (Just r') _ _) = Const r'
 
 shrinkBranches :: forall x r. (r -> [r]) -> Branches x r -> [Branches x r]
 shrinkBranches shrinkR = go where
@@ -39,4 +40,8 @@ shrinkBin shrinkR = go where
     BinEmpty : b0 : b1
       :  fmap (\b0' -> BinAlt r b0' b1) (go b0)
       ++ fmap (\b1' -> BinAlt r b0 b1') (go b1)
-      ++ fmap (\r' -> BinAlt r' b0 b1) (shrinkR r)
+      ++ fmap (\r' -> BinAlt r' b0 b1) (shrinkMaybe shrinkR r)
+
+shrinkMaybe :: (r -> [r]) -> Maybe r -> [Maybe r]
+shrinkMaybe _ Nothing = []
+shrinkMaybe shrinkR (Just r) = Nothing : fmap Just (shrinkR r)

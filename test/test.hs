@@ -48,7 +48,7 @@ testFunctionPretty = testGroup "pretty"
       $ "case a0 :: Integer of { -1 -> -1 ; 0 -> 0 ; 1 -> 1 ; _ -> 2 }"
       @=? prettyFun_
         (CaseInteger "Integer" id "2"
-          (BinAlt "0" (BinAlt "1" BinEmpty BinEmpty) (BinAlt "-1" BinEmpty BinEmpty)))
+          (binAlt "0" (binAlt "1" BinEmpty BinEmpty) (binAlt "-1" BinEmpty BinEmpty)))
   ]
 
 trivialProperty :: (Eq a, Show a) => ((a -> a) -> a) -> Property
