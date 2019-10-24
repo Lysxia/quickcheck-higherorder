@@ -26,7 +26,7 @@ prettyFun_ = prettyFun eConst
 testFunctionPretty :: TestTree
 testFunctionPretty = testGroup "pretty"
   [ testCase "example"
-      $ "case a0 :: Either _ _ of { Left a1 -> 0 ; Right a1 -> case a1 of {} ; _ -> 0 }"
+      $ "case a0 :: Either _ _ of { Left a1 -> 0 ; Right a1 -> case a1 of {} }"
       @=? prettyFun_
         (Case "Either _ _" id "0"
           (Alt

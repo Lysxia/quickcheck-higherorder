@@ -9,6 +9,7 @@ module Test.QuickCheck.HigherOrder.Function where
 
 import Control.Applicative (liftA2)
 import Data.Void
+import Data.Semigroup (Semigroup(..))
 import Data.Kind (Type)
 
 import Test.QuickCheck (Arbitrary(..))
@@ -110,8 +111,8 @@ data Ctx = (Var, Expr) :. Ctx
 
 type C a = Ctx -> a
 
-tWild :: Pattern
-tWild = Expr (\_ -> sstring "_")
+pWild :: Pattern
+pWild = Expr (\_ -> sstring "_")
 
 tConst :: String -> Expr
 tConst s = Expr (\_ -> sstring s)
@@ -125,17 +126,17 @@ tApp f x = Expr (sparens 10 (unExpr f 10 % " " ~% unExpr x 11))
 -- The patterns are parameterized by a fresh variable.
 type CBranches = Var -> C [(Pattern, Expr)]
 
-eCase :: TypeName -> C Expr -> CBranches -> C Expr
-eCase tn r bs ((v, t) :. vs) = Expr (\_ ->
+eCase :: TypeName -> CBranches -> C Expr
+eCase tn bs ((v, t) :. vs) = Expr (\_ ->
     "case " ~% unExpr_ t % " :: " ~% tn ~% " of { "
-      ~% sBranches
+      ~% sBranches (bs v vs)
       % " }" ~% sid)
   where
     p ?-> e = unExpr_ p % " -> " ~% unExpr_ e
-    sBranches =
-      foldr (\(p, e) ebs -> (p ?-> e) % " ; " ~% ebs)
-        (tWild ?-> r vs)
-        (bs v vs)
+    sBranches [] = sid
+    sBranches ((p0, e0) : bs_) =
+      (p0 ?-> e0) %
+      foldr (\(p, e) ebs -> " ; " ~% (p ?-> e) % ebs) sid bs_
 
 eApply :: FunName -> C Expr -> C Expr
 eApply f y ((v, t) :. vs) =
@@ -155,8 +156,20 @@ eFun prettyR = go where
   go (Const r) = prettyR r
   go (CoApply a h) = eCoApply a (eFun go h)
   go (Apply fn _ h) = eApply fn (go h)
-  go (Case tn _ r b) = eCase tn (prettyR r) (eBranches prettyR b)
-  go (CaseInteger tn _ r b) = eCase tn (prettyR r) undefined
+  go (Case tn _ r b) = eCase tn (appendIf (partialBranches b) (eBranches prettyR b) (bWild (prettyR r)))
+  go (CaseInteger tn _ r b) = eCase tn (undefined b <> (bWild (prettyR r)))
+
+appendIf :: Semigroup m => Bool -> m -> m -> m
+appendIf True = (<>)
+appendIf False = const
+
+partialBranches :: Branches x r -> Bool
+partialBranches Fail = True
+partialBranches (Pat _ _) = False
+partialBranches (Alt b1 b2) = partialBranches b1 || partialBranches b2
+
+bWild :: C Expr -> CBranches
+bWild e _ vs = [(pWild, e vs)]
 
 prettyFun :: forall a r. (r -> C Expr) -> (a :-> r) -> String
 prettyFun prettyR h = unExpr_ (eFun prettyR h defCtx) ""
