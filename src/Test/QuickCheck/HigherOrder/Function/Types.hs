@@ -1,4 +1,7 @@
 {-# LANGUAGE
+    DeriveFunctor,
+    DeriveFoldable,
+    DeriveTraversable,
     FlexibleContexts,
     FlexibleInstances,
     GADTs,
@@ -37,18 +40,19 @@ data a :-> r where
 -- | Representation of the branches of a @case@.
 data Branches x r where
   Fail :: Branches x r
-  Alt :: Branches x r -> Branches y r -> Branches (Either x y) r
-  Pat :: ConName -> Fields x r -> Branches x r
+  Alt :: !(Branches x r) -> !(Branches y r) -> Branches (Either x y) r
+  Pat :: ConName -> !(Fields x r) -> Branches x r
 
 -- | Representation of one branch of a @case@.
 data Fields x r where
   NoField :: r -> Fields () r
-  Field :: Fields x (y :-> r) -> Fields (x, y) r
+  Field :: !(Fields x (y :-> r)) -> Fields (x, y) r
 
 -- | Representation of branches of a @case@ on an @Integer@.
 data Bin r
   = BinEmpty
   | BinAlt r (Bin r) (Bin r)
+  deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
 
 -- Smart constructors to enforce some invariants
 
@@ -71,3 +75,65 @@ caseInteger tn f r b = CaseInteger tn f r b
 alt :: Branches x r -> Branches y r -> Branches (Either x y) r
 alt Fail Fail = Fail
 alt b1 b2 = Alt b1 b2
+
+--
+
+instance Functor ((:->) a) where
+  fmap g h0 = case h0 of
+    Const r -> Const (g r)
+    Apply fn f h -> Apply fn f (fmap g h)
+    CoApply w f h -> CoApply w f (fmap (fmap g) h)
+    Case tn f r b -> Case tn f (g r) (fmap g b)
+    CaseInteger tn f r b -> CaseInteger tn f (g r) (fmap g b)
+    Absurd f -> Absurd f
+
+instance Functor (Branches x) where
+  fmap g b = case b of
+    Fail -> Fail
+    Alt b1 b2 -> Alt (fmap g b1) (fmap g b2)
+    Pat cn d -> Pat cn (fmap g d)
+
+instance Functor (Fields x) where
+  fmap g d = case d of
+    NoField h -> NoField (g h)
+    Field h -> Field (fmap (fmap g) h)
+
+instance Foldable ((:->) a) where
+  foldMap foldR h0 = case h0 of
+    Const r -> foldR r
+    Apply _ _ h -> foldMap foldR h
+    CoApply _ _ h -> foldMap (foldMap foldR) h
+    Case _ _ r b -> foldMap foldR b <> foldR r
+    CaseInteger _ _ r b -> foldMap foldR b <> foldR r
+    Absurd _ -> mempty
+
+instance Foldable (Branches x) where
+  foldMap foldR b = case b of
+    Fail -> mempty
+    Alt b1 b2 -> foldMap foldR b1 <> foldMap foldR b2
+    Pat _ d -> foldMap foldR d
+
+instance Foldable (Fields x) where
+  foldMap foldR d = case d of
+    NoField h -> foldR h
+    Field h -> foldMap (foldMap foldR) h
+
+truncateFun_ :: r -> (a :-> r) -> (a :-> r)
+truncateFun_ = truncateFun 4 id
+
+truncateFun :: Int -> (r -> t) -> t -> (a :-> r) -> (a :-> t)
+truncateFun 0 _ s _ = Const s
+truncateFun n truncateR r h0 = case h0 of
+  Const s -> Const (truncateR s)
+  Apply fn f h -> Apply fn f (truncateFun (n-1) truncateR r h)
+  CoApply w f h -> CoApply w f (truncateFun (n-1) (truncateFun (n-1) truncateR r) (Const r) h)
+  Case tn f s b -> Case tn f (truncateR s) (fmap truncateR b)
+  CaseInteger tn f s b -> CaseInteger tn f (truncateR s) (truncateBin (n-1) truncateR b)
+  Absurd f -> Absurd f
+
+truncateBin :: Int -> (r -> s) -> Bin r -> Bin s
+truncateBin 0 _ _ = BinEmpty
+truncateBin n truncateR d = case d of
+  BinEmpty -> BinEmpty
+  BinAlt r d0 d1 -> BinAlt (truncateR r) (go d0) (go d1)
+    where go = truncateBin (n-1) truncateR
