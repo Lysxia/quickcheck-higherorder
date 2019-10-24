@@ -8,6 +8,7 @@ module Test.QuickCheck.HigherOrder.Function
   ( (:->)
   , shrinkFun
   , prettyFun
+  , CoArbitrary(..)
   , tConst
   ) where
 

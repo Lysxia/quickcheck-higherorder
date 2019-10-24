@@ -20,8 +20,9 @@ import Data.Void (Void)
 import GHC.Generics
 import Type.Reflection
 
-import Test.QuickCheck (Gen)
+import Test.QuickCheck (Gen, arbitrary, listOf)
 
+import Test.QuickCheck.HigherOrder.Constructible (Constructible(fromRepr))
 import Test.QuickCheck.HigherOrder.Function.Types
 
 -- * Random generation
@@ -134,6 +135,11 @@ instance GToList U1 where
   gToList y _ = y
 
 -- * Instances
+
+instance (Constructible a, CoArbitrary b) => CoArbitrary (a -> b) where
+  coarbitrary g = listOf arbitrary >>= go where
+    go [] = Const <$> g
+    go (x : xs) = CoApply x fromRepr <$> coarbitrary (go xs)
 
 instance CoArbitrary () where
   coarbitrary g = Const <$> g
