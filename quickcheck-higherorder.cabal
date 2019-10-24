@@ -46,6 +46,18 @@ test-suite qcho-test
   ghc-options: -Wall
   default-language: Haskell2010
 
+test-suite qcho-sample
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: sample.hs
+  build-depends:
+    QuickCheck,
+    quickcheck-higherorder,
+    base
+  ghc-options: -Wall
+  default-language: Haskell2010
+  buildable: False
+
 source-repository head
   type:     git
   location: https://github.com/Lysxia/quickcheck-higherorder
