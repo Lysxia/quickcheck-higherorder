@@ -25,11 +25,14 @@ prettyFun_ = prettyFun eConst
 
 testFunctionPretty :: TestTree
 testFunctionPretty = testGroup "pretty"
-  [ testCase "example"
+  [ testCase "case"
       $ "case a0 :: Either _ _ of { Left a1 -> 0 ; Right a1 -> case a1 of {} }"
       @=? prettyFun_
         (Case "Either _ _" id "0"
           (Alt
             (Pat "Left" (Field (NoField (Const "0"))))
             (Pat "Right" (Field (NoField (Absurd id))))))
+  , testCase "coapply"
+      $ "case a0 0 of {}"
+      @=? prettyFun_ (CoApply (Repr_ 0 :: Repr_ Int) (Absurd id))
   ]
