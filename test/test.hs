@@ -35,4 +35,7 @@ testFunctionPretty = testGroup "pretty"
   , testCase "coapply"
       $ "case a0 0 of {}"
       @=? prettyFun_ (CoApply (Repr_ 0 :: Repr_ Int) (Absurd id))
+  , testCase "apply"
+      $ "case f a0 of {}"
+      @=? prettyFun_ (Apply "f" id (Absurd id))
   ]
