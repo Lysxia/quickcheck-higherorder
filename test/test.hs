@@ -38,4 +38,9 @@ testFunctionPretty = testGroup "pretty"
   , testCase "apply"
       $ "case f a0 of {}"
       @=? prettyFun_ (Apply "f" id (Absurd id))
+  , testCase "case-Integer"
+      $ "case a0 :: Integer of { -1 -> -1 ; 0 -> 0 ; 1 -> 1 ; _ -> 2 }"
+      @=? prettyFun_
+        (CaseInteger "Integer" id "2"
+          (BinAlt "0" (BinAlt "1" BinEmpty BinEmpty) (BinAlt "-1" BinEmpty BinEmpty)))
   ]

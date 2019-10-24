@@ -8,9 +8,11 @@
 module Test.QuickCheck.HigherOrder.Function where
 
 import Control.Applicative (liftA2)
-import Data.Void
-import Data.Semigroup (Semigroup(..))
 import Data.Kind (Type)
+import Data.List (sortBy)
+import Data.Ord (comparing)
+import Data.Semigroup (Semigroup(..))
+import Data.Void
 
 import Test.QuickCheck (Arbitrary(..))
 
@@ -157,7 +159,7 @@ eFun prettyR = go where
   go (CoApply a h) = eCoApply a (eFun go h)
   go (Apply fn _ h) = eApply fn (go h)
   go (Case tn _ r b) = eCase tn (appendIf (partialBranches b) (eBranches prettyR b) (bWild (prettyR r)))
-  go (CaseInteger tn _ r b) = eCase tn (undefined b <> (bWild (prettyR r)))
+  go (CaseInteger tn _ r b) = eCase tn (pBin prettyR b <> (bWild (prettyR r)))
 
 appendIf :: Semigroup m => Bool -> m -> m -> m
 appendIf True = (<>)
@@ -209,6 +211,23 @@ eVar v = Expr (\_ -> sVar v)
 addVar :: [Var] -> Ctx -> Ctx
 addVar [] vs = vs
 addVar (v : ps) vs = (v, eVar v) :. addVar ps vs
+
+eInt :: Integer -> Expr
+eInt n = Expr (\_ -> show n ~% sid)
+
+pBin :: (r -> C Expr) -> Bin r -> CBranches
+pBin prettyR b _ vs =
+  fmap (\(n, e) -> (eInt n, e))
+    (sortBy (comparing fst) (pBin' prettyR b vs))
+
+pBin' :: (r -> C Expr) -> Bin r -> C [(Integer, Expr)]
+pBin' prettyR b vs = go_ b where
+  go_ BinEmpty = []
+  go_ (BinAlt r b0 b1) =
+    (0, prettyR r vs) : (go 1 1 b0 . go (-1) (-1) b1) []
+  go _ _ BinEmpty k = k
+  go i n (BinAlt r b0 b1) k =
+    (n, prettyR r vs) : (go i (2 * n) b0 . go i (2 * n + i) b1) k
 
 ---
 
