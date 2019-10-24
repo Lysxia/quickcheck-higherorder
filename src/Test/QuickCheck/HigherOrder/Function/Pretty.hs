@@ -62,8 +62,11 @@ data Ctx = (Var, Expr) :. Ctx
 
 infixr 1 :.
 
+defVar :: Var
+defVar = Var "a" 0
+
 defCtx :: Ctx
-defCtx = addVar [Var "a" 0] badCtx
+defCtx = addVar [defVar] badCtx
 
 badCtx :: Ctx
 badCtx = addVar [Var "unknown" 0] badCtx

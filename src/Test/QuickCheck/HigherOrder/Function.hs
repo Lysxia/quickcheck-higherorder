@@ -28,7 +28,8 @@ import Test.QuickCheck.HigherOrder.Constructible
 -- * Instances for @(:->)@
 
 instance Show r => Show (a :-> r) where
-  showsPrec n h = unExpr (tFun tShow h defCtx) n
+  showsPrec _ h = s 0 where
+    s = sparens 0 ("\\" ~% sVar defVar % " -> " ~% unExpr_ (tFun tShow h defCtx))
 
 instance (CoArbitrary a, Arbitrary r) => Arbitrary (a :-> r) where
   arbitrary = coarbitrary arbitrary
