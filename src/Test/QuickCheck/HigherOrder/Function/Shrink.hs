@@ -14,8 +14,15 @@ shrinkFun shrinkR = go where
   go (Const r) = fmap Const (shrinkR r)
   go (CoApply a f h) = fmap (coapply a f) (shrinkFun go h) ++ fmap (\a' -> CoApply a' f h) (shrink a)
   go (Apply fn f h) = apply fn f <$> go h
-  go (Case tn f r b) = Const r : fmap (\b' -> case_ tn f r b') (shrinkBranches shrinkR b)
-  go (CaseInteger tn f r b) = root b : fmap (\b' -> caseInteger tn f r b') (shrinkBin shrinkR b) where
+  go (Case tn f r b)
+    = Const r
+    : fmap (\b' -> case_ tn f r b') (shrinkBranches shrinkR b)
+    ++ fmap (\r' -> Case tn f r' b) (shrinkR r)
+  go (CaseInteger tn f r b)
+    = root b
+    : fmap (\b' -> caseInteger tn f r b') (shrinkBin shrinkR b)
+    ++ fmap (\r' -> CaseInteger tn f r' b) (shrinkR r)
+   where
     root BinEmpty = Const r
     root (BinAlt Nothing _ _) = Const r
     root (BinAlt (Just r') _ _) = Const r'
@@ -37,10 +44,10 @@ shrinkBin :: forall r. (r -> [r]) -> Bin r -> [Bin r]
 shrinkBin shrinkR = go where
   go BinEmpty = []
   go (BinAlt r b0 b1) =
-    BinEmpty : b0 : b1
-      :  fmap (\b0' -> BinAlt r b0' b1) (go b0)
+    BinEmpty
+      : fmap (\r' -> BinAlt r' b0 b1) (shrinkMaybe shrinkR r)
+      ++ fmap (\b0' -> BinAlt r b0' b1) (go b0)
       ++ fmap (\b1' -> BinAlt r b0 b1') (go b1)
-      ++ fmap (\r' -> BinAlt r' b0 b1) (shrinkMaybe shrinkR r)
 
 shrinkMaybe :: (r -> [r]) -> Maybe r -> [Maybe r]
 shrinkMaybe _ Nothing = []
