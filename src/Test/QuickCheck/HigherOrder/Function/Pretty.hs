@@ -113,7 +113,7 @@ tFun :: forall a r. (r -> C Expr) -> (a :-> r) -> C Expr
 tFun prettyR = go where
   go :: forall b. (b :-> r) -> C Expr
   go (Absurd _) = tAbsurd
-  go (Const r) = prettyR r
+  go (Const r) = \(_ :. vs) -> prettyR r vs
   go (CoApply a _ h) = tCoApply a (tFun go h)
   go (Apply fn _ h) = tApply fn (go h)
   go (Case tn _ r b) = tCase tn (appendIf (partialBranches b) (tBranches prettyR b) (bWild (prettyR r)))
@@ -125,7 +125,7 @@ tApply f y ((v, t) :. vs) =
 
 tCoApply :: Show w => w -> C Expr -> C Expr
 tCoApply a y ((v, t) :. vs) =
-  y ((v, eApp t (eConst (showsPrec 11 a ""))) :. (v, t) :. vs)
+  y ((nextVar v, eApp t (eConst (showsPrec 11 a ""))) :. (v, t) :. vs)
 
 tAbsurd :: C Expr
 tAbsurd ((_, t) :. _) = Expr (\_ -> "case " ~% unExpr_ t % " of {}" ~% sid)
