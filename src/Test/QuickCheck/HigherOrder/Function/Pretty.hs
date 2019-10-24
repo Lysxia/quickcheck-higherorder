@@ -59,6 +59,8 @@ data Var = Var String !Int
 -- Context mapping variables to expressions.
 data Ctx = (Var, Expr) :. Ctx
 
+infixr 1 :.
+
 defCtx :: Ctx
 defCtx = addVar [Var "a" 0] badCtx
 
@@ -122,7 +124,7 @@ tApply f y ((v, t) :. vs) =
 
 tCoApply :: Show w => w -> C Expr -> C Expr
 tCoApply a y ((v, t) :. vs) =
-  y ((v, eApp t (eConst (showsPrec 11 a ""))) :. vs)
+  y ((v, eApp t (eConst (showsPrec 11 a ""))) :. (v, t) :. vs)
 
 tAbsurd :: C Expr
 tAbsurd ((_, t) :. _) = Expr (\_ -> "case " ~% unExpr_ t % " of {}" ~% sid)

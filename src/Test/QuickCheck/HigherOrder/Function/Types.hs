@@ -118,9 +118,6 @@ instance Foldable (Fields x) where
     NoField h -> foldR h
     Field h -> foldMap (foldMap foldR) h
 
-truncateFun_ :: r -> (a :-> r) -> (a :-> r)
-truncateFun_ = truncateFun 4 id
-
 truncateFun :: Int -> (r -> t) -> t -> (a :-> r) -> (a :-> t)
 truncateFun 0 _ s _ = Const s
 truncateFun n truncateR r h0 = case h0 of
