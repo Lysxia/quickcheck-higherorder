@@ -1,4 +1,5 @@
 {-# LANGUAGE
+    BangPatterns,
     GADTs,
     ScopedTypeVariables,
     TypeOperators #-}
@@ -190,3 +191,12 @@ tBin' prettyR b vs = go_ b where
   go _ _ BinEmpty k = k
   go i n (BinAlt r b0 b1) k =
     (n, prettyR r vs) : (go i (2 * n) b0 . go i (2 * n + i) b1) k
+
+render :: String -> String
+render = go 0 where
+  go !n ('{' : '}' : xs) = '{' : '}' : go n xs
+  go n ('{' : xs) = '{' : '\n' : replicate (n + 2) ' ' ++ go (n + 2) (dropWhile (== ' ') xs)
+  go n (';' : xs) = ';' : '\n' : replicate n ' ' ++ go n (dropWhile (== ' ') xs)
+  go n ('}' : xs) = '}' : go (n - 2) xs
+  go n (c : xs) = c : go n xs
+  go _ [] = []
