@@ -7,16 +7,20 @@
 module Test.QuickCheck.HigherOrder.Function
   ( (:->)
   , applyFun
+  , CoArbitrary(..)
+  , coarbitrarySynonym
+  , coarbitraryIntegral
+  , coarbitraryGeneric
+
   , prettyFun
   , shrinkFun
-  , CoArbitrary(..)
   , tConst
   ) where
 
 import Test.QuickCheck (Arbitrary(..))
 
 import Test.QuickCheck.HigherOrder.Function.Types ((:->), applyFun)
-import Test.QuickCheck.HigherOrder.Function.CoArbitrary (CoArbitrary(..))
+import Test.QuickCheck.HigherOrder.Function.CoArbitrary
 import Test.QuickCheck.HigherOrder.Function.Pretty
 import Test.QuickCheck.HigherOrder.Function.Shrink
 import Test.QuickCheck.HigherOrder.Constructible
