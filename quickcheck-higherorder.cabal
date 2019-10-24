@@ -42,6 +42,7 @@ test-suite qcho-test
     quickcheck-higherorder,
     tasty,
     tasty-hunit,
+    tasty-quickcheck,
     base
   ghc-options: -Wall
   default-language: Haskell2010

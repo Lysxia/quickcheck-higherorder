@@ -6,15 +6,16 @@
 
 module Test.QuickCheck.HigherOrder.Function
   ( (:->)
-  , shrinkFun
+  , applyFun
   , prettyFun
+  , shrinkFun
   , CoArbitrary(..)
   , tConst
   ) where
 
 import Test.QuickCheck (Arbitrary(..))
 
-import Test.QuickCheck.HigherOrder.Function.Types ((:->))
+import Test.QuickCheck.HigherOrder.Function.Types ((:->), applyFun)
 import Test.QuickCheck.HigherOrder.Function.CoArbitrary (CoArbitrary(..))
 import Test.QuickCheck.HigherOrder.Function.Pretty
 import Test.QuickCheck.HigherOrder.Function.Shrink
@@ -33,4 +34,4 @@ instance (CoArbitrary a, Arbitrary r) => Arbitrary (a :-> r) where
 
 instance (CoArbitrary a, Constructible b) => Constructible (a -> b) where
   type Repr (a -> b) = a :-> Repr b
-  fromRepr = undefined
+  fromRepr h = fromRepr . applyFun h

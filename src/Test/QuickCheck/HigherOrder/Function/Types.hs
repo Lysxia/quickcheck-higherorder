@@ -2,6 +2,7 @@
     DeriveFunctor,
     DeriveFoldable,
     DeriveTraversable,
+    EmptyCase,
     FlexibleContexts,
     FlexibleInstances,
     GADTs,
@@ -75,6 +76,40 @@ caseInteger tn f r b = CaseInteger tn f r b
 alt :: Branches x r -> Branches y r -> Branches (Either x y) r
 alt Fail Fail = Fail
 alt b1 b2 = Alt b1 b2
+
+--
+
+applyFun :: (a :-> r) -> a -> r
+applyFun (Const r) _ = r
+applyFun (CoApply w f h) x = applyFun (applyFun h (x (f w))) x
+applyFun (Apply _ f h) x = applyFun h (f x)
+applyFun (Case _ f r b) x = applyBranches r b (f x)
+applyFun (CaseInteger _ f r b) x = applyBin r b (f x)
+applyFun (Absurd f) x = case f x of {}
+
+applyBranches :: r -> Branches x r -> x -> r
+applyBranches r Fail _ = r
+applyBranches r (Alt b1 _) (Left  x) = applyBranches r b1 x
+applyBranches r (Alt _ b2) (Right y) = applyBranches r b2 y
+applyBranches _ (Pat _ d) x = applyFields d x
+
+applyFields :: Fields x r -> x -> r
+applyFields (NoField h) _ = h
+applyFields (Field h) (x, y) = applyFun (applyFields h x) y
+
+applyBin :: r -> Bin r -> Integer -> r
+applyBin r BinEmpty _ = r
+applyBin r (BinAlt r0 b0 b1) x = case compare x 0 of
+  EQ -> r0
+  GT -> applyBin' r b0 (x - 1)
+  LT -> applyBin' r b1 (- x - 1)
+
+applyBin' :: r -> Bin r -> Integer -> r
+applyBin' r BinEmpty _ = r
+applyBin' r (BinAlt r0 b0 b1) x
+  | x == 0 = r0
+  | x `div` 2 == 0 = applyBin' r b0 (x `div` 2)
+  | otherwise      = applyBin' r b1 (x `div` 2)
 
 --
 

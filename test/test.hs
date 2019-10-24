@@ -1,10 +1,14 @@
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeApplications, TypeOperators #-}
 
 module Main where
 
 import Test.Tasty
 import Test.Tasty.HUnit
+import Test.Tasty.QuickCheck
 
+import Test.QuickCheck (Property, (===))
+
+import Test.QuickCheck.HigherOrder
 import Test.QuickCheck.HigherOrder.Function
 import Test.QuickCheck.HigherOrder.Function.Types
 
@@ -19,6 +23,7 @@ tests = testGroup "tests"
 testFunction :: TestTree
 testFunction = testGroup "Function"
   [ testFunctionPretty
+  , testFunctionQC
   ]
 
 prettyFun_ :: (a :-> String) -> String
@@ -44,4 +49,14 @@ testFunctionPretty = testGroup "pretty"
       @=? prettyFun_
         (CaseInteger "Integer" id "2"
           (BinAlt "0" (BinAlt "1" BinEmpty BinEmpty) (BinAlt "-1" BinEmpty BinEmpty)))
+  ]
+
+trivialProperty :: (Eq a, Show a) => ((a -> a) -> a) -> Property
+trivialProperty f = f id === f id
+
+testFunctionQC :: TestTree
+testFunctionQC = testGroup "qc"
+  [ testProperty "trivial-Int"    (property' (trivialProperty @Int))
+  , testProperty "trivial-Bool"   (property' (trivialProperty @Bool))
+  , testProperty "trivial-Either" (property' (trivialProperty @(Either () ())))
   ]
