@@ -16,6 +16,7 @@ module Test.QuickCheck.HigherOrder.Function.CoArbitrary where
 import Control.Applicative (liftA2, liftA3)
 import Data.Functor.Identity (Identity(..))
 import Data.Kind (Type)
+import Data.Monoid (Sum(..))
 import Data.Void (Void)
 import GHC.Generics
 import Type.Reflection
@@ -173,3 +174,6 @@ instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (a, b) where
 
 instance (CoArbitrary a, CoArbitrary b) => CoArbitrary (Either a b) where
   coarbitrary = coarbitraryGeneric
+
+instance CoArbitrary a => CoArbitrary (Sum a) where
+  coarbitrary = coarbitrarySynonym "getSum" getSum
