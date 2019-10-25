@@ -23,7 +23,7 @@ import Data.Void (Void)
 import GHC.Generics
 import Type.Reflection
 
-import Test.QuickCheck (Gen, arbitrary, listOf)
+import Test.QuickCheck (Gen, arbitrary, choose)
 
 import Test.QuickCheck.HigherOrder.Constructible (Constructible(fromRepr))
 import Test.QuickCheck.HigherOrder.Function.Types
@@ -139,10 +139,17 @@ instance GToList U1 where
 
 -- * Instances
 
+-- Don't generate too many arguments, as the size of the representation
+-- increases exponentially as functions take more arguments.
+
 instance (Constructible a, CoArbitrary b) => CoArbitrary (a -> b) where
-  coarbitrary g = listOf arbitrary >>= go where
-    go [] = Const <$> g
-    go (x : xs) = CoApply x fromRepr <$> coarbitrary (go xs)
+  coarbitrary g = do
+    i <- choose (0, 4 :: Int)
+    if i == 0 then
+      Const <$> g
+    else do
+      x <- arbitrary
+      CoApply x fromRepr <$> coarbitrary (coarbitrary g)
 
 instance CoArbitrary () where
   coarbitrary g = Const <$> g
