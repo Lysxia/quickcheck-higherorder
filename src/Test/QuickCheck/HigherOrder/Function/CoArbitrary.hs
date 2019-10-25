@@ -11,6 +11,8 @@
     TypeOperators,
     UndecidableInstances #-}
 
+-- * Random representations of higher-order functions
+
 module Test.QuickCheck.HigherOrder.Function.CoArbitrary where
 
 import Control.Applicative (liftA2, liftA3)

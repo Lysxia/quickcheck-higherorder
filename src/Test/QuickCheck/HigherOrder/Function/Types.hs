@@ -33,24 +33,37 @@ instance (Arbitrary r, Show r) => ConstructibleRepr r
 -- | Representation of functions @(a -> r)@.
 data a :-> r where
   Const :: r -> a :-> r
-  CoApply :: ConstructibleRepr w => w -> (w -> a) -> (b :-> (a -> b) :-> r) -> (a -> b) :-> r
-  Apply :: FunName -> (a -> b) -> (b :-> r) -> (a :-> r)
-  Case :: TypeName -> (a -> x) -> r -> Branches x r -> (a :-> r)
-  CaseInteger :: TypeName -> (a -> Integer) -> r -> Bin r -> (a :-> r)
-  Absurd :: (a -> Void) -> a :-> r
+  -- ^ Constant function, ignore the argument.
 
--- | Representation of the branches of a @case@.
+  CoApply :: ConstructibleRepr w => w -> (w -> a) -> (b :-> (a -> b) :-> r) -> (a -> b) :-> r
+  -- ^ Apply the argument @(a -> b)@ to a value @a@, stored in some representation @w@,
+  -- and describe what to do with the result @b@ in another function.
+
+  Apply :: FunName -> (a -> b) -> (b :-> r) -> (a :-> r)
+  -- ^ Apply some function to the argument @a@.
+
+  Case :: TypeName -> (a -> x) -> r -> Branches x r -> (a :-> r)
+  -- ^ Pattern-match on the argument (in some ADT).
+  -- The branches may be incomplete, in which case a default value @r@ is used.
+
+  CaseInteger :: TypeName -> (a -> Integer) -> r -> Bin r -> (a :-> r)
+  -- ^ Pattern-match on the argument (of some integral type).
+
+  Absurd :: (a -> Void) -> a :-> r
+  -- ^ There is no value for the argument, so we're done.
+
+-- | Representation of the branches of a 'Case'.
 data Branches x r where
   Fail :: Branches x r
   Alt :: !(Branches x r) -> !(Branches y r) -> Branches (Either x y) r
   Pat :: ConName -> !(Fields x r) -> Branches x r
 
--- | Representation of one branch of a @case@.
+-- | Representation of one branch of a 'Case'.
 data Fields x r where
   NoField :: r -> Fields () r
   Field :: !(Fields x (y :-> r)) -> Fields (x, y) r
 
--- | Representation of branches of a @case@ on an @Integer@.
+-- | Representation of branches of a 'CaseInteger'.
 data Bin r
   = BinEmpty
   | BinAlt (Maybe r) (Bin r) (Bin r)
