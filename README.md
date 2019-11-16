@@ -6,7 +6,7 @@ A QuickCheck extension for properties of higher-order functions.
 
 ```haskell
 import Test.QuickCheck (quickCheck)
-import Test.QuickCheck.HigherOrder (property', Equation((:=:)))
+import Test.QuickCheck.HigherOrder (property', Equation((:=:)), CoArbitrary)
 
 import Control.Monad.Cont (Cont, ContT(..), callCC)
 
@@ -22,8 +22,11 @@ main = quickCheck (property' (callCC_bind @Int @Int))
 
 -- Newtype boilerplate
 
+import Test.QuickCheck (Gen)
+import Test.QuickCheck.HigherOrder (CoArbitrary, TestEq(..), Constructible(..))
+
 -- Constructible instances
-instance (CoArbitrary (m r), Constructible a, Constructible (m r)) => Constructible (ContT r m a) where
+instance (CoArbitrary Gen (m r), Constructible a, Constructible (m r)) => Constructible (ContT r m a) where
   type Repr (ContT r m a) = Repr ((a -> m r) -> m r)
   fromRepr = ContT . fromRepr
 
@@ -36,6 +39,6 @@ instance (TestEq ((a -> m r) -> m r)) => TestEq (ContT r m a) where
 - Redesigned `Testable`.
 - A new `Constructible` type class for values with representations
   which can be generated randomly, shrunk, and shown.
-- Representation of higher-order functions.
+- Representation of higher-order functions (via [*test-fun*](https://hackage.haskell.org/package/test-fun)).
 - Replace property combinators with constructors: properties with
   observable syntax.

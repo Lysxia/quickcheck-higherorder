@@ -1,42 +1,46 @@
-{-# LANGUAGE TypeFamilies, TypeOperators #-}
+{-# LANGUAGE
+    FlexibleContexts,
+    MultiParamTypeClasses,
+    ScopedTypeVariables,
+    TypeFamilies,
+    TypeOperators #-}
 
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Representation of (higher-order) functions.
 
-module Test.QuickCheck.HigherOrder.Function
-  ( (:->)
-  , applyFun
-  , CoArbitrary(..)
-  , coarbitrarySynonym
-  , coarbitraryIntegral
-  , coarbitraryGeneric
+module Test.QuickCheck.HigherOrder.Function where
 
-  , prettyFun
-  , shrinkFun
-  , tConst
-  ) where
+import Test.Fun ((:->), applyFun, shrinkFun, cogenFun, CoArbitrary(..), Concrete(..))
+import Test.QuickCheck (Arbitrary(..), Gen, choose)
 
-import Test.QuickCheck (Arbitrary(..))
-
-import Test.QuickCheck.HigherOrder.Function.Types ((:->), applyFun)
-import Test.QuickCheck.HigherOrder.Function.CoArbitrary
-import Test.QuickCheck.HigherOrder.Function.Pretty
-import Test.QuickCheck.HigherOrder.Function.Shrink
 import Test.QuickCheck.HigherOrder.Constructible
 
 -- * Instances for @(:->)@
 
-instance Show r => Show (a :-> r) where
-  showsPrec _ h = s 0 where
-    s = sparens 0 ("\\" ~% sVar defVar % " -> " ~% unExpr_ (tFun tShow h defCtx))
+concrete :: (Arbitrary a, Show a) => Concrete a
+concrete = Concrete shrink showsPrec
 
-instance (CoArbitrary a, Arbitrary r) => Arbitrary (a :-> r) where
+instance (CoArbitrary Gen a, Arbitrary r) => Arbitrary (a :-> r) where
   arbitrary = coarbitrary arbitrary
   shrink = shrinkFun shrink
 
+instance (Constructible a, CoArbitrary Gen b) => CoArbitrary Gen (a -> b) where
+  coarbitrary g = do
+    n <- geometric 4
+    cogenFun n concrete arbitrary fromRepr coarbitrary g
+
+geometric :: Int -> Gen Int
+geometric w = go 0 where
+  go i = i `seq` do
+    x <- choose (0, w)
+    if x == 0 then
+      pure i
+    else
+      go (i + 1)
+
 -- * 'Constructible' instance for @(->)@
 
-instance (CoArbitrary a, Constructible b) => Constructible (a -> b) where
+instance (CoArbitrary Gen a, Constructible b) => Constructible (a -> b) where
   type Repr (a -> b) = a :-> Repr b
   fromRepr h = fromRepr . applyFun h

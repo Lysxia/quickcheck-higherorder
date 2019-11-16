@@ -20,15 +20,12 @@ library
     Test.QuickCheck.HigherOrder
     Test.QuickCheck.HigherOrder.Constructible
     Test.QuickCheck.HigherOrder.Function
-    Test.QuickCheck.HigherOrder.Function.CoArbitrary
-    Test.QuickCheck.HigherOrder.Function.Pretty
-    Test.QuickCheck.HigherOrder.Function.Shrink
-    Test.QuickCheck.HigherOrder.Function.Types
     Test.QuickCheck.HigherOrder.Testable
     Test.QuickCheck.HigherOrder.Testable.Class
     Test.QuickCheck.HigherOrder.TestEq
   build-depends:
     QuickCheck,
+    test-fun,
     base >= 4.9 && < 5
   ghc-options:         -Wall
   default-language:    Haskell2010
@@ -43,6 +40,7 @@ test-suite qcho-test
     tasty,
     tasty-hunit,
     tasty-quickcheck,
+    test-fun,
     base
   ghc-options: -Wall
   default-language: Haskell2010
@@ -54,6 +52,7 @@ test-suite qcho-sample
   build-depends:
     QuickCheck,
     quickcheck-higherorder,
+    test-fun,
     base
   ghc-options: -Wall
   default-language: Haskell2010

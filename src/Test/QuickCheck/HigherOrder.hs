@@ -6,13 +6,6 @@ module Test.QuickCheck.HigherOrder
   , Constructed()
   , pattern Construct
 
-    -- * CoArbitrary
-  , (:->)
-  , CoArbitrary(..)
-  , coarbitrarySynonym
-  , coarbitraryIntegral
-  , coarbitraryGeneric
-
     -- * Testable class
   , Testable'(..)
   , Equation(..)
@@ -28,10 +21,22 @@ module Test.QuickCheck.HigherOrder
     -- * Testable equality
   , TestEq(..)
   , decEq
+
+    -- * CoArbitrary
+    --
+    -- From "Test.Fun".
+  , (:->)
+  , applyFun
+  , CoArbitrary(..)
+  , cogenEmbed
+  , cogenIntegral
+  , coarbitraryGeneric
   ) where
+
+import Test.Fun
 
 import Test.QuickCheck.HigherOrder.Testable
 import Test.QuickCheck.HigherOrder.Testable.Class
 import Test.QuickCheck.HigherOrder.TestEq
 import Test.QuickCheck.HigherOrder.Constructible
-import Test.QuickCheck.HigherOrder.Function
+import Test.QuickCheck.HigherOrder.Function ()
