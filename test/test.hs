@@ -3,10 +3,7 @@
 module Main where
 
 import Test.Tasty
-import Test.Tasty.HUnit
-import Test.Tasty.QuickCheck
-
-import Test.QuickCheck (Property, (===))
+import Test.Tasty.QuickCheck (Property, (===), testProperty, expectFailure)
 
 import Test.QuickCheck.HigherOrder
 

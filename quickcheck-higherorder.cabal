@@ -35,12 +35,10 @@ test-suite qcho-test
   hs-source-dirs: test
   main-is: test.hs
   build-depends:
-    QuickCheck,
     quickcheck-higherorder,
     tasty,
     tasty-hunit,
     tasty-quickcheck,
-    test-fun,
     base
   ghc-options: -Wall
   default-language: Haskell2010

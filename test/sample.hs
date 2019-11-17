@@ -26,3 +26,5 @@ main :: IO ()
 main = do
   sample_ (truncateFun 4 id 33 <$> genFun @(Int -> Int) @Int)
   sample_ (truncateFun 4 id 33 <$> genFun @(Int -> Either () ()) @Int)
+  -- sample_ (truncateFun 10 id undefined <$> genFun @Bool @Bool)
+  -- sample_ (truncateFun 100 id undefined <$> genFun @(Bool -> Bool) @Bool)
