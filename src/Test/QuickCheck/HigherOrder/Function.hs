@@ -26,18 +26,13 @@ instance (CoArbitrary Gen a, Arbitrary r) => Arbitrary (a :-> r) where
   shrink = shrinkFun shrink
 
 instance (Constructible a, CoArbitrary Gen b) => CoArbitrary Gen (a -> b) where
-  coarbitrary g = do
-    n <- geometric 4
-    cogenFun n concrete arbitrary fromRepr coarbitrary g
-
-geometric :: Int -> Gen Int
-geometric w = go 0 where
-  go i = i `seq` do
-    x <- choose (0, w)
-    if x == 0 then
-      pure i
-    else
-      go (i + 1)
+  coarbitrary = cogenFun concrete ga fromRepr coarbitrary where
+    ga = do
+      x <- choose (0, 4 :: Int)
+      if x == 0 then
+        pure Nothing
+      else
+        Just <$> arbitrary
 
 -- * 'Constructible' instance for @(->)@
 
