@@ -1,30 +1,38 @@
 {-# LANGUAGE PatternSynonyms #-}
 
+-- | QuickCheck extension for properties of higher-order functions.
+--
+-- See the README for an introduction.
+
 module Test.QuickCheck.HigherOrder
   ( -- * Constructible values
     Constructible(..)
   , Constructed()
   , pattern Construct
 
-    -- * Testable class
-  , Testable'(..)
-  , Equation(..)
-  , Implication(..)
-  , EqImpl
-  , Decidable(..)
-
     -- * Runners
   , quickCheck'
   , quickCheckWith'
+
+    -- * Testable properties
+  , Testable'(..)
+
+    -- ** Types of testable properties
+  , Equation(..)
+  , Implication(..)
+  , EqImpl
+
+    -- ** Decidable properties
+  , Decidable(..)
+
+    -- * Testable equality
+  , TestEq(..)
+  , decEq
 
     -- * Helpers
   , forAll_
   , ok
   , ko
-
-    -- * Testable equality
-  , TestEq(..)
-  , decEq
 
     -- * CoArbitrary
     --

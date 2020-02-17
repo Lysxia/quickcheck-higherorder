@@ -17,6 +17,8 @@ class Testable' prop where
 
 -- * Helpers
 
+-- | Equivalent to 'property'' specialized to functions:
+-- convert a function to a 'Property'.
 forAll_
   :: forall a prop
   .  (Constructible a, Testable' prop)
