@@ -13,6 +13,10 @@ module Test.QuickCheck.HigherOrder
   , EqImpl
   , Decidable(..)
 
+    -- * Runners
+  , quickCheck'
+  , quickCheckWith'
+
     -- * Helpers
   , forAll_
   , ok

@@ -53,6 +53,14 @@ class Decidable a where
 
 -- * Auxiliary functions
 
+-- | Variant of 'quickCheck' using the alternative 'Testable''.
+quickCheck' :: Testable' prop => prop -> IO ()
+quickCheck' = quickCheck . property'
+
+-- | Variant of 'quickCheckWith' using the alternative 'Testable''.
+quickCheckWith' :: Testable' prop => Args -> prop -> IO ()
+quickCheckWith' args = quickCheckWith args . property'
+
 -- | A named property that should pass.
 ok :: Testable' prop => String -> prop -> (String, Property)
 ok s prop = (s, property' prop)
