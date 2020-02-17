@@ -18,11 +18,11 @@ import Test.QuickCheck
 -- This enhances 'Arbitrary' and 'Show' used by vanilla QuickCheck.
 --
 -- The main motivating example is the type of functions, which can be
--- finitely represented by the type @('Test.Fun.:->')@
--- (see "Test.Fun").
+-- finitely represented by the type @('Test.QuickCheck.HigherOrder.:->')@
+-- (see also "Test.Fun").
 --
--- It turns out we can define 'Constructible' for anything
--- except 'IO' and higher-order functions (for now...).
+-- It turns out we can define 'Constructible' for just about anything
+-- except 'IO' (for now...).
 class (Arbitrary (Repr a), Show (Repr a)) => Constructible a where
   -- | The observable representation of a value.
   type Repr a
