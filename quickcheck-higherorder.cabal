@@ -54,7 +54,12 @@ test-suite qcho-sample
     base
   ghc-options: -Wall
   default-language: Haskell2010
-  buildable: False
+  if !flag(sample)
+    buildable: False
+
+flag sample
+  default: False
+  manual: True
 
 source-repository head
   type:     git
