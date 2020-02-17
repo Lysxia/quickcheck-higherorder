@@ -1,11 +1,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Test.QuickCheck.HigherOrder.Testable.Class where
+module Test.QuickCheck.HigherOrder.Internal.Testable.Class where
 
 import Test.QuickCheck
 
-import Test.QuickCheck.HigherOrder.Constructible
+import Test.QuickCheck.HigherOrder.Internal.Constructible
 
 -- * An alternative Testable
 

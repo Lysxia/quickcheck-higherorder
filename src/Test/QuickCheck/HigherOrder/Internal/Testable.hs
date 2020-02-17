@@ -1,11 +1,11 @@
 -- | An alternative to Testable
 
-module Test.QuickCheck.HigherOrder.Testable where
+module Test.QuickCheck.HigherOrder.Internal.Testable where
 
 import Test.QuickCheck
 
-import Test.QuickCheck.HigherOrder.Testable.Class
-import Test.QuickCheck.HigherOrder.TestEq
+import Test.QuickCheck.HigherOrder.Internal.Testable.Class
+import Test.QuickCheck.HigherOrder.Internal.TestEq
 
 
 -- * Syntax for properties

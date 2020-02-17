@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Test.QuickCheck.HigherOrder.Constructible where
+module Test.QuickCheck.HigherOrder.Internal.Constructible where
 
 import Data.Functor.Identity
 import qualified Data.Monoid as Monoid

@@ -9,12 +9,12 @@
 
 -- | Representation of (higher-order) functions.
 
-module Test.QuickCheck.HigherOrder.Function where
+module Test.QuickCheck.HigherOrder.Internal.Function where
 
 import Test.Fun ((:->), applyFun, shrinkFun, cogenFun, CoArbitrary(..), Concrete(..))
 import Test.QuickCheck (Arbitrary(..), Gen, choose)
 
-import Test.QuickCheck.HigherOrder.Constructible
+import Test.QuickCheck.HigherOrder.Internal.Constructible
 
 -- * Instances for @(:->)@
 

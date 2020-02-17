@@ -18,11 +18,11 @@ library
   hs-source-dirs:      src
   exposed-modules:
     Test.QuickCheck.HigherOrder
-    Test.QuickCheck.HigherOrder.Constructible
-    Test.QuickCheck.HigherOrder.Function
-    Test.QuickCheck.HigherOrder.Testable
-    Test.QuickCheck.HigherOrder.Testable.Class
-    Test.QuickCheck.HigherOrder.TestEq
+    Test.QuickCheck.HigherOrder.Internal.Constructible
+    Test.QuickCheck.HigherOrder.Internal.Function
+    Test.QuickCheck.HigherOrder.Internal.Testable
+    Test.QuickCheck.HigherOrder.Internal.Testable.Class
+    Test.QuickCheck.HigherOrder.Internal.TestEq
   build-depends:
     QuickCheck,
     test-fun,

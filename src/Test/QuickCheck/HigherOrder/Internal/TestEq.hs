@@ -1,14 +1,14 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Test.QuickCheck.HigherOrder.TestEq where
+module Test.QuickCheck.HigherOrder.Internal.TestEq where
 
 import Data.Functor.Identity
 import qualified Data.Monoid as Monoid
 import Test.QuickCheck
 
-import Test.QuickCheck.HigherOrder.Constructible
-import Test.QuickCheck.HigherOrder.Testable.Class
+import Test.QuickCheck.HigherOrder.Internal.Constructible
+import Test.QuickCheck.HigherOrder.Internal.Testable.Class
 
 -- | Testable equality
 class TestEq a where

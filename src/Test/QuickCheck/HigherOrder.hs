@@ -39,8 +39,8 @@ module Test.QuickCheck.HigherOrder
 
 import Test.Fun
 
-import Test.QuickCheck.HigherOrder.Testable
-import Test.QuickCheck.HigherOrder.Testable.Class
-import Test.QuickCheck.HigherOrder.TestEq
-import Test.QuickCheck.HigherOrder.Constructible
-import Test.QuickCheck.HigherOrder.Function ()
+import Test.QuickCheck.HigherOrder.Internal.Testable
+import Test.QuickCheck.HigherOrder.Internal.Testable.Class
+import Test.QuickCheck.HigherOrder.Internal.TestEq
+import Test.QuickCheck.HigherOrder.Internal.Constructible
+import Test.QuickCheck.HigherOrder.Internal.Function ()
