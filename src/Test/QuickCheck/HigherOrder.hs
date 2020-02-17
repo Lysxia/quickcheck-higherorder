@@ -1,6 +1,6 @@
 {-# LANGUAGE PatternSynonyms #-}
 
--- | QuickCheck extension for properties of higher-order functions.
+-- | QuickCheck extension for properties of higher-order values.
 --
 -- See the README for an introduction.
 

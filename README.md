@@ -1,6 +1,6 @@
 # Higher-order QuickCheck
 
-A QuickCheck extension for properties of higher-order functions.
+A QuickCheck extension for properties of higher-order values.
 
 ## Summary
 
