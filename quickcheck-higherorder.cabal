@@ -24,7 +24,7 @@ library
     Test.QuickCheck.HigherOrder.Internal.Testable.Class
     Test.QuickCheck.HigherOrder.Internal.TestEq
   build-depends:
-    QuickCheck,
+    QuickCheck >= 2.12,
     test-fun,
     base >= 4.9 && < 5
   ghc-options:         -Wall

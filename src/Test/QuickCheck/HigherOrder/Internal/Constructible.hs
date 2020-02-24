@@ -8,7 +8,7 @@ module Test.QuickCheck.HigherOrder.Internal.Constructible where
 import Data.Functor.Identity
 import qualified Data.Monoid as Monoid
 
-import Test.QuickCheck
+import Test.QuickCheck (Arbitrary(..), Function, CoArbitrary, Fun)
 
 -- * The 'Constructible' class
 
