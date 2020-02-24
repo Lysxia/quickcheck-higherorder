@@ -23,6 +23,7 @@ category:            Testing
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
+tested-with:         GHC == 8.0.2 || == 8.2.2 || == 8.4.4 || == 8.6.5 || == 8.8.2
 
 library
   hs-source-dirs:      src
