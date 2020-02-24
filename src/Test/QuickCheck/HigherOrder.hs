@@ -35,8 +35,7 @@ module Test.QuickCheck.HigherOrder
   , ko
 
     -- * CoArbitrary
-    --
-    -- From "Test.Fun".
+    -- | See also the documentation of "Test.Fun".
   , (:->)
   , applyFun
   , CoArbitrary(..)
