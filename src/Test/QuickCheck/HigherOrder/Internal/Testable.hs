@@ -2,6 +2,7 @@
 
 module Test.QuickCheck.HigherOrder.Internal.Testable where
 
+import Data.Traversable (for)
 import Test.QuickCheck
 
 import Test.QuickCheck.HigherOrder.Internal.Testable.Class
@@ -61,14 +62,32 @@ quickCheck' = quickCheck . property'
 quickCheckWith' :: Testable' prop => Args -> prop -> IO ()
 quickCheckWith' args = quickCheckWith args . property'
 
--- | A named property that should pass.
+-- | A named property that should __pass__.
+--
+-- Use 'ok' and 'ko' to construct lists of named properties
+-- @[('String', 'Property')]@, which can be run using 'quickChecks',
+-- or @testProperties@ from tasty-quickcheck.
 ok :: Testable' prop => String -> prop -> (String, Property)
 ok s prop = (s, property' prop)
 
--- | A named property that should fail.
+-- | A named property that should __fail__.
+--
+-- See also 'ok'.
 ko :: Testable' prop => String -> prop -> (String, Property)
 ko s = ok s . expectFailure . property'
 
+-- | Execute a list of named properties.
+quickChecks :: [(String, Property)] -> IO Bool
+quickChecks ps =
+  fmap and . for ps $ \(name, p) -> do
+    putStrLn ("=== " ++ name ++ " ===")
+    r <- quickCheckResult p
+    putStrLn ""
+    return $ case r of
+      Success{} -> True
+      Failure{} -> False
+      NoExpectedFailure{} -> False
+      GaveUp{} -> False
 
 -- Decidable instances
 

@@ -33,6 +33,7 @@ module Test.QuickCheck.HigherOrder
   , forAll_
   , ok
   , ko
+  , quickChecks
 
     -- * CoArbitrary
     -- | See also the documentation of "Test.Fun".
