@@ -1,4 +1,4 @@
-# Higher-order QuickCheck
+# Higher-order QuickCheck [![Hackage](https://img.shields.io/hackage/v/quickcheck-higherorder.svg)](https://hackage.haskell.org/package/quickcheck-higherorder) [![Build Status](https://travis-ci.com/Lysxia/quickcheck-higherorder.svg)](https://travis-ci.com/Lysxia/quickcheck-higherorder)
 
 A QuickCheck extension for properties of higher-order values.
 
