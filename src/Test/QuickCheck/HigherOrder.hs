@@ -7,8 +7,6 @@
 module Test.QuickCheck.HigherOrder
   ( -- * Constructible values
     Constructible(..)
-  , Constructed()
-  , pattern Construct
 
     -- * Runners
   , quickCheck'
@@ -30,10 +28,14 @@ module Test.QuickCheck.HigherOrder
   , decEq
 
     -- * Helpers
-  , forAll_
   , ok
   , ko
   , quickChecks
+
+    -- ** @Constructible@ wrappers
+  , forAll_
+  , Constructed()
+  , pattern Construct
 
     -- * CoArbitrary
     -- | See also the documentation of "Test.Fun".
