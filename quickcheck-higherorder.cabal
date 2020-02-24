@@ -1,6 +1,6 @@
 name:                quickcheck-higherorder
 version:             0.1.0.0
-synopsis:            Higher-order extension of QuickCheck
+synopsis:            QuickCheck extension for higher-order properties
 description:
   See README.
 homepage:            https://github.com/Lysxia/quickcheck-higherorder#readme
