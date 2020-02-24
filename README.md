@@ -49,7 +49,7 @@ main = quickCheck (\(Fn f) x -> prop_bool f x)
 ```
 
 The simpler expression `quickCheck prop_bool` would not typecheck
-because `Bool -> Bool` is not an instance of `Arbitrary` nor `Show`.
+because `Bool -> Bool` is not an instance of `Show`.
 
 With "higher-order" QuickCheck, that wrapping performed by `Fn` is instead
 taken care of by the `Constructible` class, so we can write simply:
