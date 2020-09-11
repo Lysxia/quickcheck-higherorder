@@ -2,6 +2,34 @@
 
 A QuickCheck extension for properties of higher-order values.
 
+## Examples
+
+Higher-order properties are properties which may:
+
+1. quantify over functions;
+2. state equalities between functions.
+
+Some examples:
+
+```haskell
+fmap_dot :: forall a b c. (b -> c) -> (a -> b) -> Equation (Maybe a -> Maybe c)
+fmap_dot g f x = (fmap g . fmap f) :=: fmap (f . g)
+
+callCC_bind :: forall r a. Cont r a -> Equation (Cont r a)
+callCC_bind m = callCC ((>>=) m) :=: m
+```
+
+*quickcheck-higherorder* makes it easy to define and test such properties.
+
+```haskell
+main :: IO ()
+main = do
+  quickCheck' (fmap_dot @Int @Int @Int)
+  quickCheck' (callCC_bind @Int @Int)
+```
+
+(Additional setup is required for the `callCC` example.)
+
 ## Summary
 
 QuickCheck has a cute trick to implicitly convert functions
@@ -153,7 +181,7 @@ data Equation a = a :=: a
 It is equipped with a `Testable` instance that will require a `TestEq`
 constraint indirectly at call sites only.
 
-## Example
+## Full example
 
 ```haskell
 import Test.QuickCheck (quickCheck)
