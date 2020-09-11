@@ -146,8 +146,7 @@ However, QuickCheck's way of declaring properties as functions with result type
 `Property` introduces some unexpected complexity in the types.
 
 For example, try generalizing the property `prop_bool` above to
-arbitrary types instead of `Bool`
-(so it's no longer valid as a property, of course).
+arbitrary types instead of `Bool`.
 Since we use testable equality of functions `a -> a`, we incur constraints that
 the domain must be `Constructible`, and the codomain itself must have
 testable equality.
@@ -157,7 +156,7 @@ prop_fun :: (Constructible a, TestEq a) => (a -> a) -> Property
 prop_fun f = (f . f . f) =? f
 ```
 
-In my opinion, this type tells both too much and too little.
+This type tells us both too much and too little.
 Too much, because the constraints leak details about the very specific
 way in which the comparison is performed. Too little, because a `Property`
 can do a lot of things besides testing the equality of two values;
