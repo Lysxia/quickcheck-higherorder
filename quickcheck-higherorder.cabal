@@ -1,5 +1,5 @@
 name:                quickcheck-higherorder
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            QuickCheck extension for higher-order properties
 description:
   Enhancements for property-based testing of higher-order properties.
