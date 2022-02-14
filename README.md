@@ -13,7 +13,7 @@ Some examples:
 
 ```haskell
 fmap_dot :: forall a b c. (b -> c) -> (a -> b) -> Equation (Maybe a -> Maybe c)
-fmap_dot g f x = (fmap g . fmap f) :=: fmap (f . g)
+fmap_dot g f = (fmap g . fmap f) :=: fmap (g . f)
 
 callCC_bind :: forall r a. Cont r a -> Equation (Cont r a)
 callCC_bind m = callCC ((>>=) m) :=: m
